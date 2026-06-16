@@ -9,6 +9,7 @@ from botocore.exceptions import (
     NoCredentialsError
 )
 
+
 ENDPOINT_NAME = os.environ.get(
     "ENDPOINT_NAME",
     "credit-score-endpoint"
@@ -38,9 +39,13 @@ def invoke_endpoint(features):
     }
 
     response = runtime.invoke_endpoint(
+
         EndpointName=ENDPOINT_NAME,
+
         ContentType="application/json",
+
         Accept="application/json",
+
         Body=json.dumps(payload)
     )
 
@@ -49,128 +54,117 @@ def invoke_endpoint(features):
     )
 
 
-st.set_page_config(
-    page_title="Credit Score Classification"
+st.title(
+    "Credit Score Classification"
 )
-
-st.title("Credit Score Classification")
 
 st.write(
-    "Predict customer credit score using AWS SageMaker Endpoint."
+    "Predict Credit Score using AWS SageMaker Endpoint"
 )
 
-col1, col2 = st.columns(2)
+age = st.number_input(
+    "Age",
+    value=30
+)
 
-with col1:
+income = st.number_input(
+    "Annual Income",
+    value=50000.0
+)
 
-    age = st.number_input(
-        "Age",
-        18,
-        100,
-        30
-    )
+salary = st.number_input(
+    "Monthly Salary",
+    value=4000.0
+)
 
-    annual_income = st.number_input(
-        "Annual Income",
-        value=50000.0
-    )
+bank_accounts = st.number_input(
+    "Bank Accounts",
+    value=5
+)
 
-    monthly_salary = st.number_input(
-        "Monthly Inhand Salary",
-        value=4000.0
-    )
+cards = st.number_input(
+    "Credit Cards",
+    value=3
+)
 
-    bank_accounts = st.number_input(
-        "Num Bank Accounts",
-        value=5
-    )
+interest = st.number_input(
+    "Interest Rate",
+    value=10.0
+)
 
-    credit_cards = st.number_input(
-        "Num Credit Cards",
-        value=3
-    )
+loans = st.number_input(
+    "Number of Loans",
+    value=2
+)
 
-    interest_rate = st.number_input(
-        "Interest Rate",
-        value=10.0
-    )
+delay = st.number_input(
+    "Delay From Due Date",
+    value=5
+)
 
-    loans = st.number_input(
-        "Num Loans",
-        value=2
-    )
+delayed_payment = st.number_input(
+    "Delayed Payments",
+    value=2
+)
 
-    delay_due = st.number_input(
-        "Delay From Due Date",
-        value=5
-    )
+changed_limit = st.number_input(
+    "Changed Credit Limit",
+    value=5.0
+)
 
-    delayed_payment = st.number_input(
-        "Num Delayed Payment",
-        value=2
-    )
+inquiries = st.number_input(
+    "Credit Inquiries",
+    value=3
+)
 
-with col2:
+debt = st.number_input(
+    "Outstanding Debt",
+    value=1000.0
+)
 
-    changed_limit = st.number_input(
-        "Changed Credit Limit",
-        value=5.0
-    )
+utilization = st.number_input(
+    "Credit Utilization Ratio",
+    value=30.0
+)
 
-    inquiries = st.number_input(
-        "Credit Inquiries",
-        value=3
-    )
+history = st.number_input(
+    "Credit History Age",
+    value=120
+)
 
-    debt = st.number_input(
-        "Outstanding Debt",
-        value=1000.0
-    )
+payment_min = st.selectbox(
+    "Payment of Minimum Amount",
+    [0,1]
+)
 
-    utilization = st.number_input(
-        "Credit Utilization Ratio",
-        value=30.0
-    )
+emi = st.number_input(
+    "Total EMI",
+    value=200.0
+)
 
-    history = st.number_input(
-        "Credit History Age (months)",
-        value=120
-    )
+invested = st.number_input(
+    "Amount Invested Monthly",
+    value=500.0
+)
 
-    payment_min = st.selectbox(
-        "Payment Minimum Amount",
-        [0, 1]
-    )
-
-    emi = st.number_input(
-        "Total EMI",
-        value=200.0
-    )
-
-    invested = st.number_input(
-        "Amount Invested Monthly",
-        value=500.0
-    )
-
-    balance = st.number_input(
-        "Monthly Balance",
-        value=3000.0
-    )
+balance = st.number_input(
+    "Monthly Balance",
+    value=3000.0
+)
 
 if st.button(
-    "Predict Credit Score",
-    use_container_width=True
+    "Predict Credit Score"
 ):
 
     features = [
         age,
-        annual_income,
-        monthly_salary,
+        income,
+        salary,
         bank_accounts,
-        credit_cards,
-        interest_rate,
+        cards,
+        interest,
         loans,
-        delay_due,
+        delay,
         delayed_payment,
         changed_limit,
         inquiries,
@@ -191,23 +185,9 @@ if st.button(
 
         label = result["labels"][0]
 
-        if label == "Good":
-
-            st.success(
-                f"Credit Score: {label}"
-            )
-
-        elif label == "Standard":
-
-            st.warning(
-                f"Credit Score: {label}"
-            )
-
-        else:
-
-            st.error(
-                f"Credit Score: {label}"
-            )
+        st.success(
+            f"Predicted Credit Score: {label}"
+        )
 
     except NoCredentialsError:
 
@@ -218,5 +198,5 @@ if st.button(
     except ClientError as e:
 
         st.error(
-            f"AWS Error: {e}"
+            str(e)
         )
